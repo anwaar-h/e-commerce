@@ -2,6 +2,12 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+
+@layer base{
+  button{
+    @apply cursor-pointer;
+  }
+}
 @layer base{
   h1{
     @apply text-2xl font-bold;

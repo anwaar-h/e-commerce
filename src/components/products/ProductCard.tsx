@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import {IProduct} from '@/interfaces/Product'
 import Link from 'next/link';
 import { formatPrice } from '@/helpers/currency';
@@ -7,6 +7,10 @@ import { Heart, ShoppingCart } from 'lucide-react';
 import { Button } from '../ui';
 import { renderStars } from '@/helpers/rating';
 import Image from 'next/image';
+import { apiServices } from '@/services/api';
+import toast from 'react-hot-toast';
+import AddToCartButton from './AddToCartBtn';
+import { cartContext } from '@/contexts/cartContext';
 
 interface ProductCardProps {
     product: IProduct ;
@@ -14,6 +18,11 @@ interface ProductCardProps {
 }
 
 export function ProductCard({product , viewMode = 'grid'} : ProductCardProps) {
+    
+    const [addToCartLoading, setAddToCartLoading] = useState<boolean>(false);
+    const {handleAddToCart} = useContext(cartContext)
+    
+
     
     if(viewMode === 'list'){
         
@@ -158,15 +167,17 @@ export function ProductCard({product , viewMode = 'grid'} : ProductCardProps) {
 
         </div>
 
-        <div className='p-3'>  
         {/* add to cart btn */}
-        <Button className="w-full" size="sm">
-            <ShoppingCart className="h-4 w-4 mr-2" />
-            Add to Cart
-        </Button>
+        <div className='p-3'>  
+        <AddToCartButton
+            addToCartLoading={addToCartLoading}
+            handleAddToCart={()=> handleAddToCart!(product._id,setAddToCartLoading)}
+            productQuantity={product.quantity}/>
         </div>
+        
         </div>
     </div>
+    
     );
     
 }

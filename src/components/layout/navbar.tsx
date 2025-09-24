@@ -1,16 +1,18 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { usePathname } from "next/navigation";
-import { ShoppingCart, Search, User, Menu, X } from "lucide-react";
+import { ShoppingCart, Search, User, Menu, X, Loader2 } from "lucide-react";
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@/components/ui/navigation-menu";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { cartContext } from "@/contexts/cartContext";
 
 export function Navbar() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  const {cartCount, isLoading} = useContext(cartContext)
+  
   const navItems = [
     { href: "/products", label: "Products" },
     { href: "/brands", label: "Brands" },
@@ -64,13 +66,14 @@ export function Navbar() {
             </Button>
 
             {/* shopping cart */}
+            <Link href={"/cart"}>
             <Button variant="ghost" size="icon" className="relative">
               <ShoppingCart className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-xs text-primary-foreground flex items-center justify-center">
-                0
+                {isLoading ? <Loader2 className="animate-spin" /> : cartCount}
               </span>
               <span className="sr-only">Shopping cart</span>
-            </Button>
+            </Button></Link>
 
             {/* mobile menu */}
             <Button

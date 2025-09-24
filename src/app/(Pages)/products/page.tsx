@@ -14,9 +14,7 @@ export default function ProductsPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
 
   async function fetchProducts(){
-    // const data: ProductsResponse = await apiServices.getAllProducts()
-    // setLoading(false)
-    // setProducts(data.data);
+
     try { // ADDED: Error handling with try-catch
       setLoading(true)
       const data: ProductsResponse = await apiServices.getAllProducts()
@@ -63,7 +61,6 @@ export default function ProductsPage() {
           <h1 className='text-3xl font-bold mb-2'>Products</h1>
           <p className='text-muted-foreground'>Discover Amazing Products From Our Collection</p>
         </div>
-      </div>
       {/* grid btn */}
       <div className='flex items-center justify-end mb-5'>
         <div className='flex items-center border rounded-md'>
@@ -83,7 +80,7 @@ export default function ProductsPage() {
 
       {/* products */}
       {products.length > 0 ? ( // ADDED: Conditional rendering for empty state
-        <div className={`grid gap-10 px-12 mb-8 ${
+        <div className={`grid gap-10 ${
           viewMode === 'grid'
             ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4'
             : 'grid-cols-1'
@@ -100,7 +97,9 @@ export default function ProductsPage() {
         <div className='text-center py-12'> {/* ADDED: Empty state */}
           <p className='text-muted-foreground'>No products found.</p>
         </div>
+
       )}
+      </div>
     </>
   )
 }

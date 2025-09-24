@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { IProduct } from '@/interfaces'
 import { notFound, useParams } from 'next/navigation';
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
@@ -9,8 +9,11 @@ import Link from 'next/link';
 import { renderStars } from '@/helpers/rating';
 import { formatPrice } from '@/helpers/currency';
 import { Button } from '@/components';
-import { Heart, RotateCcw, Shield, ShoppingCart, Truck } from 'lucide-react';
+import { Heart, Loader, Loader2, RotateCcw, Shield, ShoppingCart, Truck } from 'lucide-react';
 import { apiServices } from '@/services/api';
+import toast from 'react-hot-toast';
+import { cartContext } from '@/contexts/cartContext';
+import AddToCartButton from '@/components/products/AddToCartBtn';
 
 
 export default function ProductDetail() {
@@ -20,12 +23,11 @@ export default function ProductDetail() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [selectedImage, setSelectedImage] = useState(0)
-    
+    const [addToCartLoading, setAddToCartLoading] = useState(false)
+    const {handleAddToCart} = useContext(cartContext)
+
     async function FetchProductDetails() {
-        // setLoading(true)
-        // const data:SingleProductResponse = await apiServices.getProductDetails(String(id))
-        // setProduct(data.data)
-        // setLoading(false)
+        
          try { // ADDED: Error handling with try-catch
             setLoading(true)
             const data: SingleProductResponse = await apiServices.getProductDetails(String(id))
@@ -41,6 +43,7 @@ export default function ProductDetail() {
     useEffect(() => {
         FetchProductDetails()
     },[id])
+    
 
     if(loading){
         return(
@@ -54,10 +57,10 @@ export default function ProductDetail() {
 
     if(error || !product){
         return(
-            <div className='container mx-auto px-4 py-8'> {/* CHANGED: Added container and padding */}
+            <div className='container mx-auto px-4 py-8'> 
                 <div className='text-center'>
                     <p className='text-red-600 mb-4'>{error || 'Product not found'}</p>
-                    <Button onClick={FetchProductDetails}>Try Again</Button> {/* ADDED: Retry functionality */}
+                    <Button onClick={FetchProductDetails}>Try Again</Button> 
                 </div>
             </div>
         )
@@ -140,10 +143,11 @@ export default function ProductDetail() {
                         </div>
                         {/* cart&heart btns */}
                         <div className='flex gap-4 pt-4'>
-                            <Button className='flex-1' size='lg'
-                            disabled={product.quantity === 0}>
-                            <ShoppingCart className='h-5 w-5 mr-2'/>
-                            Add To Cart </Button>
+
+                            <AddToCartButton
+                            addToCartLoading={addToCartLoading}
+                            handleAddToCart={()=> handleAddToCart!(product._id, setAddToCartLoading)}
+                            productQuantity={product.quantity}/>
                             <Button variant={"outline"} size={"lg"} className="px-4">
                                 <Heart className='h-5 w-5'/>
                             </Button>
